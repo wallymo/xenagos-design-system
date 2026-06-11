@@ -348,6 +348,18 @@ pre.code{background:var(--navy-950);color:#C9D6E8;border-radius:var(--radius-md)
 pre.code .c{color:#5B7CA8}
 pre.code .k{color:var(--blue-300)}
 pre.code .s{color:#9CC4F5}
+pre.code .cap{display:block;font:500 9.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.34);margin-bottom:12px}
+/* dev: file-type badge + do/dont split (reuses tokens only) */
+.filetag{display:inline-block;font:500 11px var(--mono);color:var(--blue-500);background:var(--gray-100);border:1px solid var(--gray-200);padding:2px 8px;border-radius:var(--radius-sm)}
+.do-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.do,.dont.cell{display:block;border-radius:var(--radius-md);padding:16px 18px;font-size:13.5px;line-height:1.55;margin-top:0}
+.do{border:1px solid #cfe6db;background:#f2faf6;color:#1c6b4c}
+.do .pk,.dont.cell .pk{display:block;font:500 9.5px var(--mono);letter-spacing:.09em;text-transform:uppercase;margin-bottom:8px;opacity:.7}
+.do code,.dont.cell code{font:400 .86em var(--mono);padding:1px 5px;border-radius:4px}
+.do code{background:#e3f3eb;color:#1c6b4c}
+.dont.cell{display:block;align-items:initial;gap:0}
+.dont.cell code{background:#f7e3e1;color:#8c3a33}
+@media (max-width:640px){.do-grid{grid-template-columns:1fr}}
 
 /* ---------- tables ---------- */
 table.spec{width:100%;border-collapse:collapse;font-size:14px}
@@ -411,7 +423,11 @@ table.spec td:first-child{font:500 13px var(--mono);color:var(--ink-900);white-s
     <div class="grp">System</div>
     <a href="#motion">12 · Motion</a>
     <a href="#imagery">13 · Imagery</a>
-    <a href="#engineering">14 · Engineering</a>
+    <div class="grp">Development</div>
+    <a href="#dev-stack">14 · Stack &amp; Structure</a>
+    <a href="#dev-architecture">15 · Component Architecture</a>
+    <a href="#dev-naming">16 · Naming Conventions</a>
+    <a href="#dev-platform">17 · Responsive · SEO · Workflow</a>
   </nav>
 </aside>
 
@@ -926,48 +942,201 @@ table.spec td:first-child{font:500 13px var(--mono);color:var(--ink-900);white-s
   <div class="note"><b>Headshots:</b> consistent 4:5 crop, neutral/dark background. <b>Pending from client:</b> logo SVG, helix/molecular renders, headshots for all six executives (Squires &amp; Coffey Ross flagged "PHOTO" in deck).</div>
 </section>
 
-<!-- ================= 14 ENGINEERING ================= -->
-<section class="ds" id="engineering">
-  <div class="sec-head"><span class="sec-num">14</span><h2 class="sec-title">Engineering</h2></div>
-  <p class="sec-sub">The system ships as SCSS tokens + strictly componentized React. Pages are component calls with content via props — no hardcoded layouts, no one-offs.</p>
-  <div class="grid-2">
+<!-- ================= 14 STACK & STRUCTURE ================= -->
+<section class="ds" id="dev-stack">
+  <div class="sec-head"><span class="sec-num">14</span><h2 class="sec-title">Stack &amp; Structure</h2></div>
+  <p class="sec-sub">This is the developer half of the system. The website is built as a <b>scalable design system, not a collection of pages</b> — every decision serves reusability, modularity, consistency, maintainability, and future expansion. Conventions below mirror the live repo <code>HedgeHox/xenagos-web</code>.</p>
+
+  <div class="panel reveal">
+    <div class="panel-label">Tech stack — required &amp; in use</div>
+    <table class="spec">
+      <tr><th>Layer</th><th>Tool</th><th>Notes</th></tr>
+      <tr><td>framework</td><td>React + Vite</td><td>SPA prerendered to static HTML at build</td></tr>
+      <tr><td>language</td><td>TypeScript</td><td><code>strict: true</code> · <code>noUnusedLocals/Parameters</code> · path alias <code>@/* → src/*</code></td></tr>
+      <tr><td>linting</td><td>ESLint</td><td>typescript-eslint + react-hooks — must pass clean</td></tr>
+      <tr><td>styling</td><td>Sass / SCSS</td><td>tokens + mixins, BEM class naming</td></tr>
+      <tr><td>routing</td><td>React Router</td><td>static routes, lazy per page</td></tr>
+      <tr><td>prerender</td><td>vite-react-ssg</td><td>every route emits crawlable static HTML</td></tr>
+      <tr><td>motion</td><td>Framer Motion</td><td>staggered reveals &amp; soft transitions only</td></tr>
+    </table>
+    <div class="note"><b>Dependency philosophy:</b> lean and intentional. Additional libraries are added only for animation, motion, transitions, scrolling, or performance — never for convenience.</div>
+  </div>
+
+  <div class="grid-2" style="margin-top:20px">
     <div class="reveal">
-      <div class="panel-label" style="margin-bottom:12px">Component contract</div>
-<pre class="code"><span class="c">// /components/hero/hero.tsx + hero.scss</span>
-<span class="k">&lt;Hero</span>
-  eyebrow=<span class="s">"Precision Oncology · XMS™"</span>
-  titleLine1=<span class="s">"Developing precision guided therapeutics"</span>
-  titleLine2=<span class="s">"to transform cancer treatment."</span>
-  body=<span class="s">"The XMS™ platform hijacks cancer's…"</span>
-  primaryCta=<span class="s">{{ label: "Explore the science", to: "/science" }}</span>
-  theme=<span class="s">"dark"</span>
-<span class="k">/&gt;</span></pre>
+      <div class="panel-label" style="margin-bottom:12px"><code>src/</code> layout</div>
+<pre class="code"><span class="cap">project structure</span>src/
+├─ components/   <span class="c">// one folder per reusable UI element</span>
+│  └─ hero/      <span class="c">//   hero.tsx + hero.scss</span>
+├─ pages/        <span class="c">// Home · About · Science …</span>
+├─ content/      <span class="c">// page copy as typed modules</span>
+├─ styles/       <span class="c">// _tokens.scss · _mixins.scss · globals.scss</span>
+├─ hooks/        <span class="c">// useReveal · useScrolled · useParallax</span>
+├─ lib/          <span class="c">// small utilities (gtm, motion)</span>
+├─ App.tsx       <span class="c">// shared layout: NavBar + Outlet + Footer</span>
+├─ routes.tsx    <span class="c">// route table (lazy per page)</span>
+└─ main.tsx      <span class="c">// entry</span></pre>
     </div>
     <div class="reveal">
-      <div class="panel-label" style="margin-bottom:12px">Token import</div>
-<pre class="code"><span class="c">// every component imports the single token source</span>
-<span class="k">@use</span> <span class="s">'@/styles/tokens'</span> <span class="k">as</span> t;
-
-.hero {
-  background: t.$navy-900;
-  padding-block: <span class="k">map.get</span>(t.$space, 24);
-  <span class="k">@include</span> t.desktop { padding-block: <span class="k">map.get</span>(t.$space, 32); }
-}</pre>
+      <div class="panel-label" style="margin-bottom:12px">The folder rule</div>
+      <div class="panel" style="padding:24px">
+        <p class="t-small">Every reusable UI element lives in its own folder under <code>components/</code>, named in <b>kebab-case</b>, holding a paired component + style file:</p>
+        <p style="margin:16px 0 6px;text-align:center"><span class="filetag">components/feature-card/</span></p>
+        <p style="text-align:center"><span class="filetag">feature-card.tsx</span> &nbsp;+&nbsp; <span class="filetag">feature-card.scss</span></p>
+        <div class="note" style="margin-top:18px">There are <b>25 components</b> on this pattern today. Two exceptions ship behaviour, not visuals, so they carry no <code>.scss</code>: <code>seo-head</code> (meta tags) and <code>reveal-group</code> (scroll logic).</div>
+      </div>
     </div>
   </div>
+</section>
+
+<!-- ================= 15 COMPONENT ARCHITECTURE ================= -->
+<section class="ds" id="dev-architecture">
+  <div class="sec-head"><span class="sec-num">15</span><h2 class="sec-title">Component Architecture</h2></div>
+  <p class="sec-sub">All UI is componentized. Each component splits cleanly into a <code>.tsx</code> for logic and markup and a <code>.scss</code> for its own styling — and pages are <b>compositions of component calls fed by props</b>, never hardcoded layouts.</p>
+
+  <div class="grid-2">
+    <div class="panel reveal">
+      <div class="panel-label"><span class="filetag">name.tsx</span> &nbsp;is responsible for</div>
+      <ul style="margin:14px 0 0 18px;color:var(--ink-600);font-size:14.5px;line-height:1.9">
+        <li>collecting props</li>
+        <li>conditional rendering</li>
+        <li>rendering markup</li>
+        <li>handling state / logic</li>
+        <li>exposing configurable properties</li>
+      </ul>
+    </div>
+    <div class="panel reveal">
+      <div class="panel-label"><span class="filetag">name.scss</span> &nbsp;is responsible for</div>
+      <ul style="margin:14px 0 0 18px;color:var(--ink-600);font-size:14.5px;line-height:1.9">
+        <li>component-specific styling <b>only</b></li>
+        <li>responsive styling</li>
+        <li>modifier states</li>
+        <li>animations / transitions where applicable</li>
+        <li>nothing global — tokens come from <code>styles/</code></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="reveal" style="margin-top:20px">
+    <div class="panel-label" style="margin-bottom:12px">Pages are component calls with content via props</div>
+<pre class="code"><span class="cap">pages/Home.tsx — composition, not markup</span><span class="c">// copy lives in content/home.ts, imported as `c`</span>
+<span class="k">&lt;SeoHead</span> title={c.seo.title} description={c.seo.description} path=<span class="s">"/"</span> <span class="k">/&gt;</span>
+
+<span class="k">&lt;Hero</span> {...c.hero} <span class="k">/&gt;</span>
+
+<span class="k">&lt;SectionBand</span> tone=<span class="s">"dark"</span> texture<span class="k">&gt;</span>
+  <span class="k">&lt;SectionIntro</span> {...c.approach} onDark <span class="k">/&gt;</span>
+  {c.approach.features.map((f, i) =&gt; (
+    <span class="k">&lt;FeatureCard</span> key={f.title} {...f} icon={stepIcons[i]} <span class="k">/&gt;</span>
+  ))}
+<span class="k">&lt;/SectionBand&gt;</span></pre>
+  </div>
+
   <div class="panel reveal" style="margin-top:20px">
-    <div class="panel-label">Hard requirements (Tech Direction)</div>
+    <div class="panel-label">Avoid</div>
+    <div class="dont"><span class="x">✕</span><span>hardcoded page content inside pages &nbsp;·&nbsp; duplicated section markup &nbsp;·&nbsp; inline styling &nbsp;·&nbsp; one-off components &nbsp;·&nbsp; page-specific logic where a reusable solution is possible</span></div>
+    <div class="note"><b>Why it matters:</b> content and layout must be able to evolve quickly — new pages, sections, leaders, and stories — without structural rewrites. If a layout can't be expressed by existing components, the <b>system grows first</b>; the page never goes one-off.</div>
+  </div>
+</section>
+
+<!-- ================= 16 NAMING CONVENTIONS ================= -->
+<section class="ds" id="dev-naming">
+  <div class="sec-head"><span class="sec-num">16</span><h2 class="sec-title">Naming Conventions</h2></div>
+  <p class="sec-sub">Consistency is enforced through naming. One casing rule per layer, applied everywhere — so any developer can predict a file, class, component, or token name without looking it up.</p>
+
+  <div class="panel reveal">
+    <div class="panel-label">The convention map</div>
     <table class="spec">
-      <tr><th>Area</th><th>Rule</th></tr>
-      <tr><td>stack</td><td>React + Vite + TypeScript + ESLint + Sass/SCSS — dependencies lean and intentional</td></tr>
-      <tr><td>structure</td><td>every reusable element in <code>/components/&lt;name&gt;/</code> with paired <code>.tsx</code> + <code>.scss</code></td></tr>
-      <tr><td>responsive</td><td>390→1600px, content capped at 1600px, three intentionally designed breakpoints</td></tr>
-      <tr><td>seo</td><td>title, meta description, OG/social tags, favicon, canonical — every page passes Meta SEO Inspector before QA</td></tr>
-      <tr><td>workflow</td><td>feature branch → PR into <code>dev</code> (staging) on <code>HedgeHox/xenagos-web</code></td></tr>
-      <tr><td>compliance</td><td>scientific/financial claims require client legal review before publish</td></tr>
+      <tr><th>Layer</th><th>Convention</th><th>Example</th></tr>
+      <tr><td>component folder</td><td>kebab-case</td><td><code>components/feature-card/</code></td></tr>
+      <tr><td>component files</td><td><code>&lt;folder&gt;.tsx</code> + <code>&lt;folder&gt;.scss</code></td><td><code>feature-card.tsx</code> · <code>feature-card.scss</code></td></tr>
+      <tr><td>React component</td><td>PascalCase · default export</td><td><code>export default function FeatureCard()</code></td></tr>
+      <tr><td>props type</td><td><code>&lt;Name&gt;Props</code> · <code>interface</code>, never <code>type</code></td><td><code>interface FeatureCardProps</code></td></tr>
+      <tr><td>props</td><td>camelCase · descriptive · union variants</td><td><code>line1</code> · <code>primaryCta</code> · <code>tone?: 'light' | 'dark'</code> · <code>onDark</code></td></tr>
+      <tr><td>page files</td><td>PascalCase</td><td><code>pages/Home.tsx</code></td></tr>
+      <tr><td>content modules</td><td>kebab/lowercase per page</td><td><code>content/home.ts</code></td></tr>
+      <tr><td>SCSS classes</td><td>BEM · single class · <code>block__el--mod</code></td><td><code>.hero__grid</code> · <code>.btn--primary</code></td></tr>
+      <tr><td>tokens</td><td>SCSS vars / map accessors</td><td><code>$navy-900</code> · <code>space(24)</code> · <code>@include type(h2)</code></td></tr>
+      <tr><td>breakpoint mixins</td><td>mobile-first, named</td><td><code>@include tablet</code> · <code>@include desktop</code></td></tr>
     </table>
   </div>
-  <p class="t-small" style="margin-top:40px;color:var(--ink-400)">Xenagos Bio Design System v1.0 · June 2026 · Pairs with <code style="font:inherit">design-system-spec.md</code> and <code style="font:inherit">_tokens.scss</code> · Values flagged ⚠ pending brand-asset confirmation before final QA.</p>
+
+  <div class="grid-2" style="margin-top:20px">
+    <div class="reveal">
+      <div class="panel-label" style="margin-bottom:12px">Consuming tokens in a component</div>
+<pre class="code"><span class="cap">feature-card.scss</span><span class="c">// tokens + mixins are auto-injected by Vite —</span>
+<span class="c">// no per-file @use needed (additionalData)</span>
+.feature-card {
+  background: $navy-900;
+  padding: <span class="k">space</span>(8);
+  border-radius: $radius-md;
+
+  <span class="k">@include</span> desktop {
+    padding: <span class="k">space</span>(12);
+  }
+  &amp;__title { <span class="k">@include</span> type(h4); }
+  &amp;--on-dark { color: $on-dark; }
+}</pre>
+    </div>
+    <div class="reveal">
+      <div class="panel-label" style="margin-bottom:12px">Do &amp; don't</div>
+      <div class="do-grid">
+        <div class="do"><span class="pk">✓ do</span>kebab files · descriptive camelCase props (<code>primaryCta</code>) · <code>interface XProps</code> · BEM classes · blue accent only</div>
+        <div class="dont cell"><span class="pk">✕ don't</span><code>FeatureCard.tsx</code> / <code>*.module.scss</code> · generic props (<code>type</code>, <code>data</code>, <code>style</code>) · inline styles · any teal/green accent</div>
+      </div>
+      <div class="note" style="margin-top:14px">Blue is the only accent (see <a href="#principles" style="color:var(--blue-500)">Principles</a>). No second palette ever enters a component.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 17 RESPONSIVE · SEO · WORKFLOW ================= -->
+<section class="ds" id="dev-platform">
+  <div class="sec-head"><span class="sec-num">17</span><h2 class="sec-title">Responsive · SEO · Workflow</h2></div>
+  <p class="sec-sub">The non-negotiable platform requirements every page clears before QA: a designed responsive range, complete metadata, and the branch-to-staging workflow.</p>
+
+  <div class="panel reveal">
+    <div class="panel-label">Responsive — render 390px → 1600px</div>
+    <table class="spec">
+      <tr><th>Rule</th><th>Detail</th></tr>
+      <tr><td>content cap</td><td>text/content containers max <code>1600px</code> (<code>$content-max</code>); background visuals may bleed full-width, content never does</td></tr>
+      <tr><td>mobile</td><td>&lt; 768px · primary mobile experience · designed @ 390</td></tr>
+      <tr><td>tablet</td><td>768–1199px · <code>@include tablet</code></td></tr>
+      <tr><td>desktop</td><td>≥ 1200px · <code>@include desktop</code></td></tr>
+    </table>
+    <div class="note">Each breakpoint is <b>intentionally designed</b>, not a compressed desktop. Token values live in <code>_tokens.scss</code>; layout rhythm is documented in <a href="#spacing" style="color:var(--blue-500)">03 · Spacing &amp; Layout</a>.</div>
+  </div>
+
+  <div class="panel reveal" style="margin-top:20px">
+    <div class="panel-label">SEO &amp; metadata — every page</div>
+<pre class="code"><span class="cap">one component, every page</span><span class="k">&lt;SeoHead</span>
+  title=<span class="s">"Our Science"</span>
+  description=<span class="s">"The Xenagos Molecular Signature™ platform…"</span>
+  path=<span class="s">"/science"</span>
+<span class="k">/&gt;</span>  <span class="c">// → title · meta description · canonical · OG · Twitter · robots</span></pre>
+    <table class="spec" style="margin-top:18px">
+      <tr><th>Requirement</th><th>Handled by</th></tr>
+      <tr><td>title + meta description</td><td><code>SeoHead</code> (site name auto-appended)</td></tr>
+      <tr><td>OG + social sharing tags</td><td><code>og:*</code> + <code>twitter:*</code> emitted per page</td></tr>
+      <tr><td>canonical</td><td>built from <code>path</code> prop</td></tr>
+      <tr><td>favicon</td><td>global, in the document head</td></tr>
+      <tr><td>crawlable output</td><td>prerendered to static HTML by vite-react-ssg</td></tr>
+    </table>
+    <div class="note"><b>Mandatory gate:</b> every page must pass the <a href="https://chromewebstore.google.com/detail/meta-seo-inspector/ibkclpciafdglkjkcibmohobjkcfkaef" style="color:var(--blue-500)">Meta SEO Inspector</a> before final QA.</div>
+  </div>
+
+  <div class="panel reveal" style="margin-top:20px">
+    <div class="panel-label">Workflow &amp; QA gates</div>
+    <table class="spec">
+      <tr><th>Gate</th><th>Rule</th></tr>
+      <tr><td>branching</td><td>feature branch → pull request into <code>dev</code> (staging) on <code>HedgeHox/xenagos-web</code></td></tr>
+      <tr><td>type &amp; lint</td><td>TypeScript <code>strict</code> passes · ESLint clean — no warnings shipped</td></tr>
+      <tr><td>metadata</td><td>Meta SEO Inspector validated on every page</td></tr>
+      <tr><td>motion</td><td><code>prefers-reduced-motion</code> honored — reveals, parallax, and drift disabled</td></tr>
+      <tr><td>compliance</td><td>scientific / financial claims require client legal review before publish</td></tr>
+    </table>
+  </div>
+
+  <p class="t-small" style="margin-top:40px;color:var(--ink-400)">Xenagos Bio Design System v1.0 · June 2026 · Pairs with <code style="font:inherit">design-system-spec.md</code>, the live repo <code style="font:inherit">HedgeHox/xenagos-web</code>, and <code style="font:inherit">_tokens.scss</code> · Values flagged ⚠ pending brand-asset confirmation before final QA.</p>
 </section>
 
 </div><!-- /page -->
