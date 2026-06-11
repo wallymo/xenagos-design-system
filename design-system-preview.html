@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Xenagos Bio — Design System Preview v0.1</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-950:#070F1F;--navy-900:#0A1A33;--navy-800:#0D1B2E;--navy-700:#122742;--navy-600:#1B3556;
+    --blue-300:#7CA8F2;--blue-400:#4A82EE;--blue-500:#2F6FE3;--blue-600:#2257C4;
+    --white:#fff;--gray-50:#F6F7F9;--gray-100:#F1F3F5;--gray-200:#E6E8EC;--gray-300:#D4D8DC;
+    --ink-900:#1A2230;--ink-600:#5B6470;--ink-400:#8A929C;--on-dark-muted:#9AA6B6;
+    --radius-sm:4px;--radius-md:8px;--radius-lg:12px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Figtree',-apple-system,sans-serif;color:var(--ink-900);background:var(--gray-50);-webkit-font-smoothing:antialiased;line-height:1.5;}
+  .wrap{max-width:1100px;margin:0 auto;padding:56px 40px 96px;}
+  .doc-head{margin-bottom:8px;}
+  .doc-title{font-size:34px;font-weight:300;letter-spacing:-0.02em;}
+  .doc-title b{color:var(--blue-500);font-weight:300;}
+  .doc-meta{font-size:13px;color:var(--ink-400);margin-top:10px;max-width:640px;line-height:1.55;}
+  .warnpill{display:inline-block;font-size:11px;font-weight:600;color:#9a6a00;background:#fdf3dc;border:1px solid #f3dca0;padding:3px 9px;border-radius:20px;margin-top:14px;}
+  section{margin-top:52px;}
+  .sec-eyebrow{font-size:12px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--blue-500);margin-bottom:18px;}
+  .sec-eyebrow .n{color:var(--ink-400);margin-right:8px;}
+  .card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:28px;}
+
+  /* swatches */
+  .swatch-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;}
+  .swatch{border:1px solid var(--gray-200);border-radius:var(--radius-md);overflow:hidden;background:#fff;}
+  .swatch .chip{height:72px;}
+  .swatch .meta{padding:9px 10px;}
+  .swatch .name{font-size:12px;font-weight:600;}
+  .swatch .hex{font-size:11px;color:var(--ink-400);font-variant-numeric:tabular-nums;margin-top:2px;}
+  .row-label{font-size:12px;font-weight:600;color:var(--ink-600);text-transform:uppercase;letter-spacing:0.08em;margin:22px 0 12px;}
+
+  /* type */
+  .type-row{display:flex;align-items:baseline;gap:20px;padding:14px 0;border-bottom:1px solid var(--gray-200);}
+  .type-row:last-child{border-bottom:none;}
+  .type-tag{flex:0 0 96px;font-size:11px;font-weight:600;color:var(--ink-400);text-transform:uppercase;letter-spacing:0.08em;}
+  .type-spec{flex:0 0 150px;font-size:11px;color:var(--ink-400);font-variant-numeric:tabular-nums;}
+  .t-display{font-size:60px;font-weight:300;letter-spacing:-0.02em;line-height:1.06;}
+  .t-h1{font-size:48px;font-weight:300;letter-spacing:-0.018em;}
+  .t-h2{font-size:40px;font-weight:400;letter-spacing:-0.015em;}
+  .t-h3{font-size:28px;font-weight:500;letter-spacing:-0.01em;}
+  .t-h4{font-size:20px;font-weight:600;}
+  .t-bodylg{font-size:18px;font-weight:400;}
+  .t-body{font-size:16px;font-weight:400;}
+  .t-small{font-size:14px;font-weight:400;color:var(--ink-600);}
+  .t-eyebrow{font-size:12px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--blue-500);}
+
+  .twotone{font-size:46px;font-weight:300;letter-spacing:-0.02em;line-height:1.08;}
+  .twotone .l2{color:var(--blue-500);display:block;}
+  .rule{width:48px;height:2px;background:var(--blue-500);margin:18px 0;}
+
+  /* buttons */
+  .btn{display:inline-flex;align-items:center;gap:9px;font-family:inherit;font-size:14px;font-weight:600;padding:13px 26px;border-radius:var(--radius-sm);border:none;cursor:pointer;transition:all .18s;}
+  .btn .arr{transition:transform .18s;}
+  .btn:hover .arr{transform:translateX(3px);}
+  .btn-primary{background:var(--blue-500);color:#fff;}
+  .btn-primary:hover{background:var(--blue-400);}
+  .btn-primary:active{background:var(--blue-600);}
+  .btn-ghost{background:transparent;color:var(--ink-900);border:1px solid var(--gray-300);}
+  .btn-ghost:hover{border-color:var(--blue-500);color:var(--blue-500);}
+  .btn-disabled{background:var(--gray-300);color:#fff;cursor:not-allowed;}
+  .btn-link{background:none;border:none;color:var(--blue-500);font-weight:600;font-size:14px;cursor:pointer;display:inline-flex;gap:7px;align-items:center;}
+  .btn-row{display:flex;gap:14px;align-items:center;flex-wrap:wrap;}
+  .state-tag{font-size:10px;color:var(--ink-400);text-transform:uppercase;letter-spacing:0.08em;margin-top:8px;text-align:center;}
+  .btn-cell{display:flex;flex-direction:column;align-items:center;}
+
+  /* dark sample */
+  .dark-card{background:var(--navy-900);border-radius:var(--radius-lg);padding:36px;color:#fff;position:relative;overflow:hidden;}
+  .glow{position:absolute;top:-120px;right:-80px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(47,111,227,.35),transparent 65%);filter:blur(10px);}
+  .dark-card .inner{position:relative;z-index:2;}
+  .dark-card .eyebrow{font-size:12px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--blue-300);margin-bottom:14px;}
+  .dark-card h3{font-size:34px;font-weight:300;letter-spacing:-0.02em;line-height:1.1;}
+  .dark-card h3 .b{color:var(--blue-400);}
+  .dark-card p{color:var(--on-dark-muted);font-size:15px;margin-top:14px;max-width:440px;line-height:1.6;}
+  .dark-btn{margin-top:22px;background:var(--blue-500);color:#fff;border:none;font-family:inherit;font-weight:600;font-size:14px;padding:13px 26px;border-radius:var(--radius-sm);cursor:pointer;}
+
+  /* component cards */
+  .comp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+  .feature{padding:24px;border:1px solid var(--gray-200);border-radius:var(--radius-md);background:#fff;}
+  .feature .ico{width:34px;height:34px;border:1.5px solid var(--blue-500);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--blue-500);font-size:16px;margin-bottom:16px;}
+  .feature h4{font-size:18px;font-weight:600;margin-bottom:7px;}
+  .feature p{font-size:13.5px;color:var(--ink-600);line-height:1.55;}
+  .update{padding:20px 0;border-top:1px solid var(--gray-200);}
+  .update .cat{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--blue-500);}
+  .update .date{font-size:12px;color:var(--ink-400);margin-left:8px;}
+  .update h4{font-size:15px;font-weight:600;margin-top:8px;line-height:1.4;}
+
+  /* spacing scale */
+  .space-grid{display:flex;gap:18px;align-items:flex-end;flex-wrap:wrap;}
+  .space-cell{text-align:center;}
+  .space-box{background:var(--blue-300);border-radius:3px;}
+  .space-cell .lab{font-size:11px;color:var(--ink-400);margin-top:6px;font-variant-numeric:tabular-nums;}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  @media(max-width:760px){.swatch-grid{grid-template-columns:repeat(2,1fr);}.comp-grid,.grid2{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="doc-head">
+    <div class="doc-title">Xenagos Bio — <b>Design System</b> Preview</div>
+    <div class="doc-meta">v0.1, derived from client brand comps. This page renders the inferred tokens so they can be validated visually before engineering hardening. Pairs with <code>design-system-spec.md</code> and <code>_tokens.scss</code>.</div>
+    <div class="warnpill">⚠ Colors &amp; type sizes are eyeballed from screenshots — confirm against brand assets</div>
+  </div>
+
+  <!-- COLOR -->
+  <section>
+    <div class="sec-eyebrow"><span class="n">01</span>Color</div>
+    <div class="card">
+      <div class="row-label">Brand / Dark</div>
+      <div class="swatch-grid">
+        <div class="swatch"><div class="chip" style="background:#070F1F"></div><div class="meta"><div class="name">navy-950</div><div class="hex">#070F1F</div></div></div>
+        <div class="swatch"><div class="chip" style="background:#0A1A33"></div><div class="meta"><div class="name">navy-900</div><div class="hex">#0A1A33</div></div></div>
+        <div class="swatch"><div class="chip" style="background:#0D1B2E"></div><div class="meta"><div class="name">navy-800</div><div class="hex">#0D1B2E</div></div></div>
+        <div class="swatch"><div class="chip" style="background:#122742"></div><div class="meta"><div class="name">navy-700</div><div class="hex">#122742</div></div></div>
+        <div class="swatch"><div class="chip" style="background:#1B3556"></div><div class="meta"><div class="name">navy-600</div><div class="hex">#1B3556</div></div></div>
+      </div>
+      <div class="row-label">Accent — Blue (only accent)</div>
+      <div class="swatch-grid">
+        <div class="swatch"><div class="chip" style="background:#7CA8F2"></div><div class="meta"><div class="name">blue-300</div><div class="hex">#7CA8F2</div></div></div>
+        <div class="swatch"><div class="chip" style="background:#4A82EE"></div><div class="meta"><div class="name">blue-400 · hover</div><div class="hex">#4A82EE</div></div></div>
+        <div class="swatch"><div class="chip" style="background:#2F6FE3"></div><div class="meta"><div class="name">blue-500 · primary</div><div class="hex">#2F6FE3</div></div></div>
+        <div class="swatch"><div class="chip" style="background:#2257C4"></div><div class="meta"><div class="name">blue-600 · active</div><div class="hex">#2257C4</div></div></div>
+        <div class="swatch"><div class="chip" style="background:repeating-linear-gradient(45deg,#eee,#eee 6px,#fff 6px,#fff 12px)"></div><div class="meta"><div class="name">no teal/green</div><div class="hex">—</div></div></div>
+      </div>
+      <div class="row-label">Neutrals &amp; Text</div>
+      <div class="swatch-grid">
+        <div class="swatch"><div class="chip" style="background:#F6F7F9;border-bottom:1px solid #eee"></div><div class="meta"><div class="name">gray-50</div><div class="hex">#F6F7F9</div></div></div>
+        <div class="swatch"><div class="chip" style="background:#E6E8EC"></div><div class="meta"><div class="name">gray-200</div><div class="hex">#E6E8EC</div></div></div>
+        <div class="swatch"><div class="chip" style="background:#1A2230"></div><div class="meta"><div class="name">ink-900</div><div class="hex">#1A2230</div></div></div>
+        <div class="swatch"><div class="chip" style="background:#5B6470"></div><div class="meta"><div class="name">ink-600</div><div class="hex">#5B6470</div></div></div>
+        <div class="swatch"><div class="chip" style="background:#8A929C"></div><div class="meta"><div class="name">ink-400</div><div class="hex">#8A929C</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TYPE -->
+  <section>
+    <div class="sec-eyebrow"><span class="n">02</span>Typography — Figtree (placeholder for confirmed brand font)</div>
+    <div class="card">
+      <div class="type-row"><div class="type-tag">Display</div><div class="type-spec">60 / 1.06 / 300</div><div class="t-display">Decoding biology.</div></div>
+      <div class="type-row"><div class="type-tag">H1</div><div class="type-spec">48 / 1.1 / 300</div><div class="t-h1">Transforming precision oncology</div></div>
+      <div class="type-row"><div class="type-tag">H2</div><div class="type-spec">40 / 1.12 / 400</div><div class="t-h2">Our science &amp; platform</div></div>
+      <div class="type-row"><div class="type-tag">H3</div><div class="type-spec">28 / 1.2 / 500</div><div class="t-h3">Xenagos Molecular Signature</div></div>
+      <div class="type-row"><div class="type-tag">H4</div><div class="type-spec">20 / 1.3 / 600</div><div class="t-h4">Multiple Myeloma</div></div>
+      <div class="type-row"><div class="type-tag">Body LG</div><div class="type-spec">18 / 1.6 / 400</div><div class="t-bodylg">A precision oncology company developing novel therapies.</div></div>
+      <div class="type-row"><div class="type-tag">Body</div><div class="type-spec">16 / 1.6 / 400</div><div class="t-body">Naturally occurring genetic elements, reactivated in cancer, become carriers for therapy.</div></div>
+      <div class="type-row"><div class="type-tag">Small</div><div class="type-spec">14 / 1.5 / 400</div><div class="t-small">Patent protection through at least 2039.</div></div>
+      <div class="type-row"><div class="type-tag">Eyebrow</div><div class="type-spec">12 / 0.14em / 600</div><div class="t-eyebrow">Our Approach</div></div>
+    </div>
+  </section>
+
+  <!-- SIGNATURE PATTERN -->
+  <section>
+    <div class="sec-eyebrow"><span class="n">03</span>Signature headline — two-tone + accent rule</div>
+    <div class="grid2">
+      <div class="card">
+        <div class="twotone">Decoding biology.<span class="l2">Transforming cancer therapy.</span></div>
+        <div class="rule"></div>
+        <div class="t-body" style="color:var(--ink-600);max-width:420px">Line 1 in ink, line 2 in blue-500, with a 48×2px accent rule beneath.</div>
+      </div>
+      <div class="dark-card">
+        <div class="glow"></div>
+        <div class="inner">
+          <div class="eyebrow">Xenagos Molecular Signature™</div>
+          <h3>Precision guided.<br><span class="b">Purpose built.</span></h3>
+          <p>The same two-tone system on the dark band — line 2 shifts to blue-400 for contrast on navy.</p>
+          <button class="dark-btn">Explore the science →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUTTONS -->
+  <section>
+    <div class="sec-eyebrow"><span class="n">04</span>Buttons &amp; states</div>
+    <div class="card">
+      <div class="btn-row">
+        <div class="btn-cell"><button class="btn btn-primary">Explore the platform <span class="arr">→</span></button><div class="state-tag">primary · default</div></div>
+        <div class="btn-cell"><button class="btn btn-primary" style="background:#4A82EE">Explore the platform <span class="arr">→</span></button><div class="state-tag">hover</div></div>
+        <div class="btn-cell"><button class="btn btn-primary" style="background:#2257C4">Explore the platform <span class="arr">→</span></button><div class="state-tag">active</div></div>
+        <div class="btn-cell"><button class="btn btn-disabled">Explore the platform</button><div class="state-tag">disabled</div></div>
+      </div>
+      <div class="btn-row" style="margin-top:24px">
+        <div class="btn-cell"><button class="btn btn-ghost">Investor overview <span class="arr">→</span></button><div class="state-tag">secondary / ghost</div></div>
+        <div class="btn-cell"><button class="btn-link">View our approach <span class="arr">→</span></button><div class="state-tag">text link</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPONENTS -->
+  <section>
+    <div class="sec-eyebrow"><span class="n">05</span>Core components</div>
+    <div class="comp-grid">
+      <div class="feature"><div class="ico">◎</div><h4>Tumor Specific</h4><p>XMS sequences derive from cancer's own biology, specific to tissue of origin.</p></div>
+      <div class="feature"><div class="ico">⇄</div><h4>Precision Delivery</h4><p>Payloads delivered selectively to tumor cells, sparing healthy tissue.</p></div>
+      <div class="feature"><div class="ico">⛨</div><h4>Overcoming Limitations</h4><p>Designed to overcome antigen escape and antibody-based constraints.</p></div>
+    </div>
+    <div class="card" style="margin-top:18px">
+      <div class="update" style="border-top:none"><span class="cat">Press Release</span><span class="date">May 12, 2026</span><h4>Xenagos Bio announces $35M Series A to advance precision guided therapeutics into the clinic</h4></div>
+      <div class="update"><span class="cat">Publication</span><span class="date">Apr 28, 2026</span><h4>Tumor-derived DNA internalization is tissue-of-origin specific and enables targeted payload delivery</h4></div>
+    </div>
+  </section>
+
+  <!-- SPACING -->
+  <section>
+    <div class="sec-eyebrow"><span class="n">06</span>Spacing scale (8px base)</div>
+    <div class="card">
+      <div class="space-grid">
+        <div class="space-cell"><div class="space-box" style="width:4px;height:4px"></div><div class="lab">4</div></div>
+        <div class="space-cell"><div class="space-box" style="width:8px;height:8px"></div><div class="lab">8</div></div>
+        <div class="space-cell"><div class="space-box" style="width:12px;height:12px"></div><div class="lab">12</div></div>
+        <div class="space-cell"><div class="space-box" style="width:16px;height:16px"></div><div class="lab">16</div></div>
+        <div class="space-cell"><div class="space-box" style="width:24px;height:24px"></div><div class="lab">24</div></div>
+        <div class="space-cell"><div class="space-box" style="width:32px;height:32px"></div><div class="lab">32</div></div>
+        <div class="space-cell"><div class="space-box" style="width:48px;height:48px"></div><div class="lab">48</div></div>
+        <div class="space-cell"><div class="space-box" style="width:64px;height:64px"></div><div class="lab">64</div></div>
+        <div class="space-cell"><div class="space-box" style="width:96px;height:96px"></div><div class="lab">96</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LAYOUT -->
+  <section>
+    <div class="sec-eyebrow"><span class="n">07</span>Layout &amp; breakpoints</div>
+    <div class="card">
+      <div class="t-body" style="color:var(--ink-600)">
+        Render range <b style="color:var(--ink-900)">390px → 1600px</b> · content max-width <b style="color:var(--ink-900)">1600px</b> (bg may bleed full-width).<br>
+        Breakpoints: <b style="color:var(--ink-900)">mobile</b> ≤767 (designed @390) · <b style="color:var(--ink-900)">tablet</b> 768–1199 · <b style="color:var(--ink-900)">desktop</b> ≥1200. Each intentionally designed, not compressed.<br>
+        Radius: sm 4 · md 8 · lg 12. Motion: 200 / 400 / 700ms, ease-out; subtle helix drift, honor reduced-motion.
+      </div>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>
